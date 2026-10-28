@@ -44,7 +44,7 @@ impl TryFrom<String> for Email {
     fn try_from(value: String) -> Result<Self, Self::Error> {
         let value_in = value.trim();
 
-        if !value_in.contains("@") || value_in.chars().count() < 5 || !value_in.contains(".com") {
+        if !value_in.contains("@") || value_in.chars().count() < 5 {
             return Err("E-mail Inválido".to_owned());
         } else {
             Ok(Self {

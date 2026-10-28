@@ -12,12 +12,12 @@ impl Database {
         }
     }
     pub fn criar_usuario(&self, usuario: Usuario) -> Result<(), String> {
-        let mut guard = self.usuarios.try_lock().map_err(|e| format!("{e}"))?;
+        let mut guard = self.usuarios.lock().map_err(|e| format!("{e}"))?;
         guard.push(usuario.clone());
         Ok(())
     }
     pub fn listar_usuarios(&self) -> Result<Vec<Usuario>, String> {
-        let guard = self.usuarios.try_lock().map_err(|e| format!("{e}"))?;
+        let guard = self.usuarios.lock().map_err(|e| format!("{e}"))?;
         Ok(guard.clone())
     }
 }

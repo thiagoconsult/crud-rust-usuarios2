@@ -1,6 +1,6 @@
 use crate::{
     db::Database,
-    usecases::{criar_usuario, listar_usuarios},
+    http::{criar_usuario, listar_usuarios},
 };
 use axum::{
     Router,
