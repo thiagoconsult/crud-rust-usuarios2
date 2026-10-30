@@ -2,6 +2,7 @@ use crate::modelo::vos::{Email, Nome};
 
 use super::vos::Id;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Serialize, Debug, Clone)]
 pub struct Usuario {
@@ -20,6 +21,25 @@ impl Usuario {
             nome,
             email,
             ativo: true,
+        })
+    }
+    pub fn id(&self) -> &Uuid {
+        &self.id.id()
+    }
+    pub fn igual(&self, outro_usuario: &Usuario) -> bool {
+        self.id.igual(*outro_usuario.id.id())
+    }
+    pub fn atualizar(&self, outro_usuario: CriarUsuario) -> Result<Self, String> {
+        let nome = Nome::try_from(outro_usuario.nome)?;
+        let email = Email::try_from(outro_usuario.email)?;
+        let id = self.id.clone();
+        let ativo = self.ativo;
+
+        Ok(Self {
+            id,
+            nome,
+            email,
+            ativo,
         })
     }
 }

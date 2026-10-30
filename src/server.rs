@@ -1,10 +1,10 @@
 use crate::{
-    db::Database,
-    http::{criar_usuario, listar_usuarios},
+    http::{atualizar_usuario, buscar_usuario, buscar_usuarios, criar_usuario},
+    infra::Database,
 };
 use axum::{
     Router,
-    routing::{get, post},
+    routing::{get, post, put},
 };
 use tokio::net::TcpListener;
 
@@ -13,7 +13,9 @@ pub async fn run() -> Result<(), String> {
 
     let app = Router::new()
         .route("/usuario", post(criar_usuario))
-        .route("/usuario", get(listar_usuarios))
+        .route("/usuario", get(buscar_usuarios))
+        .route("/usuario/{id}", get(buscar_usuario))
+        .route("/usuario/{id}", put(atualizar_usuario))
         .with_state(db);
 
     let listener = match TcpListener::bind("127.0.0.1:3000").await {

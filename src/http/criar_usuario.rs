@@ -1,19 +1,26 @@
 use axum::{Json, extract::State, http::StatusCode};
 
 use crate::{
-    db::Database,
+    infra::Database,
     modelo::usuario::{CriarUsuario, Usuario},
+    usecases::{criar_usuario::executar, erros::CriarUsuarioErro},
 };
 
 pub async fn criar_usuario(
     State(db): State<Database>,
     Json(payload): Json<CriarUsuario>,
 ) -> Result<(StatusCode, Json<Usuario>), (StatusCode, String)> {
-    let usuario = Usuario::new(payload.nome, payload.email)
-        .map_err(|e| (StatusCode::UNPROCESSABLE_ENTITY, e))?;
-
-    db.criar_usuario(usuario.clone())
-        .map_err(|e| (StatusCode::INTERNAL_SERVER_ERROR, e))?;
-
-    Ok((StatusCode::CREATED, Json(usuario)))
+    match executar(&db, payload.nome, payload.email) {
+        Ok(usuario) => Ok((StatusCode::CREATED, Json(usuario))),
+        Err(e) => match e {
+            CriarUsuarioErro::DadosInvalidos(e) => Err((StatusCode::UNPROCESSABLE_ENTITY, e)),
+            CriarUsuarioErro::FalhaArmazenamento(e) => {
+                println!("{:?}", e);
+                Err((
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "Falha Interna.".to_string(),
+                ))
+            }
+        },
+    }
 }

@@ -12,6 +12,16 @@ impl Id {
             value: Uuid::new_v4(),
         }
     }
+    pub fn id(&self) -> &Uuid {
+        &self.value
+    }
+    pub fn igual(&self, id: Uuid) -> bool {
+        self.value.eq(&id)
+    }
+}
+pub fn from_str(id: &str) -> Result<(), String> {
+    Uuid::parse_str(id).map_err(|e| format!("{e}"))?;
+    Ok(())
 }
 
 #[derive(Serialize, Debug, Clone)]
